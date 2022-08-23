@@ -1,0 +1,100 @@
+/**Mostrar unicamente los nombre de todos los Pokémon**/
+use('db_pokemonMarlon');
+db.data.aggregate([
+    { $sort : { Name : -1} },
+    {
+        "$match": {} // filtramos unicamente los datos que cumplen la condicion
+    },
+    {
+        "$project": {
+            "Type 1": 0,
+            "Type 2": 0,
+            "Total": 0,
+            "HP": 0,
+            "Attack": 0,
+            "Defense": 0,
+            "Sp": 0,
+            "Speed": 0,
+            "Generation": 0,
+            "Legendary": 0
+        }  // espesificamos que campos quiero visualizar
+    },
+    {
+        "$unwind": "$Name",
+        //"$unwind": "$COSTO_CANASTA" // separamos el arreglo por documentos
+    },
+    {
+        "$group": {                  
+            "_id": "nuevo_id", // es necesario crear un nuevo _id para el nuevo documento
+            "POKEMON": {
+                "$addToSet": "$Name"// agregamos los nuevos datos a grupo que en este caso son los gobiernos
+            }, 
+        }
+    }
+])
+
+/**Enlistar todos los pokemons que sean de tipo 1 Agua**/
+use('db_pokemonMarlon');
+db.data.find({'Type 1': 'Water'}).limit(100).toArray();
+
+/**Enlistar todos los pokemons cuyo Tipo 1 sean fuego y sus puntos de vida(HP) sea mayor a 80**/
+use('db_pokemonMarlon');
+db.data.find({$and:[{'Type 1': 'Fire'},{'HP':{$gt:80}}]}).limit(100).toArray();
+
+/**Enlistar todos los pokemons cuyo nombre empiece con la letra P**/
+use('db_pokemonMarlon');
+db.data.aggregate([
+    { $sort : { Name : -1} },
+    {
+        "$match": {'Name': /^P/} // filtramos unicamente los datos que cumplen la condicion
+    },
+    {
+        "$project": {
+            "Type 1": 0,
+            "Type 2": 0,
+            "Total": 0,
+            "HP": 0,
+            "Attack": 0,
+            "Defense": 0,
+            "Sp": 0,
+            "Speed": 0,
+            "Generation": 0,
+            "Legendary": 0
+        }  // espesificamos que campos quiero visualizar
+    },
+    {
+        "$unwind": "$Name",
+        //"$unwind": "$COSTO_CANASTA" // separamos el arreglo por documentos
+    },
+    {
+        "$group": {                  
+            "_id": "nuevo_id", // es necesario crear un nuevo _id para el nuevo documento
+            "POKEMON": {
+                "$addToSet": "$Name"// agregamos los nuevos datos a grupo que en este caso son los gobiernos
+            }, 
+        }
+    }
+])
+
+/**Enlistar todos los pokemons cuyo nombre empiecen con S, tengan al menos una i y que su ataque sea mayor que 90**/
+use('db_pokemonMarlon');
+db.data.find(
+    {$and:
+        [
+            {'Name': /^S/},
+            {'Name': /i/i},
+            {'Attack':{$gt:90}}
+        ]
+    },
+    {
+        "Type 1": 0,
+        "Type 2": 0,
+        "Total": 0,
+        "HP": 0,
+        "Defense": 0,
+        "Sp": 0,
+        "Speed": 0,
+        "Generation": 0,
+        "Legendary": 0
+    }
+).limit(100).toArray();
